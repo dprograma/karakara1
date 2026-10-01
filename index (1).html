@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kakàraka — Relief in your hands</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#13241C; --leaf:#2E6B4F; --deep:#1F4D3A; --shea:#F2B632; --mist:#EEF3EC; --paper:#FFFFFF; --line:#D5E0D6; --muted:#55685D; --alert:#B3261E;
+  --bg:var(--mist); --card:var(--paper); --text:var(--ink);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0F1A14; --card:#18271F; --text:#E7EFE9; --line:#2A3D32; --muted:#9DB2A5; --mist:#18271F; } }
+:root[data-theme="dark"]{ --bg:#0F1A14; --card:#18271F; --text:#E7EFE9; --line:#2A3D32; --muted:#9DB2A5; --mist:#18271F; }
+html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0; min-height:100%; background:var(--bg); color:var(--text); font:17px/1.55 "Atkinson Hyperlegible",system-ui,sans-serif; padding-bottom:84px}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif; line-height:1.1; margin:0 0 .4em}
+h2{font-size:1.6rem; font-weight:800}
+h3{font-size:1.15rem; font-weight:800}
+p{margin:0 0 .8em}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--shea); outline-offset:2px}
+main{max-width:560px; margin:0 auto; padding:16px}
+.view{display:none} .view.on{display:block}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+
+/* Splash */
+#splash{position:fixed; inset:0; z-index:50; background:var(--deep); color:#fff; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:24px; transition:opacity .5s}
+#splash.gone{opacity:0; pointer-events:none}
+.word{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:clamp(3rem,16vw,5.5rem); letter-spacing:-.03em; line-height:.9; color:var(--shea)}
+.word span{display:inline-block; animation:beat 1.4s ease-in-out infinite}
+.word span:nth-child(even){animation-delay:.12s}
+@keyframes beat{0%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+#splash p{max-width:26ch; opacity:.9; margin-top:14px}
+#splash button{margin-top:28px; background:var(--shea); color:var(--ink); border:0; border-radius:999px; padding:14px 30px; font-weight:700}
+
+/* Header */
+header.top{background:var(--deep); color:#fff; padding:18px 16px 22px}
+header.top .in{max-width:560px; margin:0 auto}
+header.top .brand{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:1.5rem; color:var(--shea)}
+header.top .loc{font-size:.85rem; opacity:.8}
+.motd{margin-top:14px; font-family:"Bricolage Grotesque",sans-serif; font-size:1.25rem; font-weight:500; line-height:1.3}
+
+/* Ask box */
+.ask{background:var(--card); border:2px solid var(--leaf); border-radius:18px; padding:14px; margin:-6px 0 18px; position:relative}
+.ask label{font-weight:700; display:block; margin-bottom:6px}
+.ask .row{display:flex; gap:8px}
+.ask input{flex:1; min-width:0; border:1px solid var(--line); background:var(--bg); border-radius:12px; padding:12px}
+.btn{background:var(--leaf); color:#fff; border:0; border-radius:12px; padding:12px 16px; font-weight:700}
+.btn.ghost{background:transparent; color:var(--leaf); border:2px solid var(--leaf)}
+.btn.gold{background:var(--shea); color:var(--ink)}
+.btn.full{width:100%}
+
+/* Tiles */
+.tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.tile{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 6px; text-align:center; font-size:.9rem; font-weight:700; min-height:92px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px}
+.tile .ic{font-size:1.7rem}
+.tile.urgent{border-color:var(--alert)}
+section{margin-bottom:26px}
+.services{display:grid; gap:0; background:var(--card); border-radius:16px; border:1px solid var(--line); overflow:hidden}
+.services div{padding:12px 14px; border-top:1px solid var(--line)}
+.services div:first-child{border-top:0}
+.services b{display:block}
+
+/* Relief detail */
+.back{background:none; border:0; color:var(--leaf); font-weight:700; padding:6px 0; margin-bottom:6px}
+.steps{counter-reset:s; list-style:none; padding:0; margin:0 0 16px}
+.steps li{counter-increment:s; position:relative; padding:12px 12px 12px 52px; background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:8px}
+.steps li::before{content:counter(s); position:absolute; left:12px; top:12px; width:28px; height:28px; border-radius:50%; background:var(--shea); color:var(--ink); font-weight:700; display:grid; place-items:center}
+.point{background:var(--card); border-left:5px solid var(--leaf); border-radius:10px; padding:12px 14px; margin-bottom:12px}
+.red{background:#FCECEA; color:#5B130F; border-radius:14px; padding:12px 14px; margin-bottom:12px}
+:root[data-theme="dark"] .red{background:#3A1614; color:#FFD9D5}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .red{background:#3A1614; color:#FFD9D5}}
+.red b{display:block}
+
+/* Breathe */
+.seg{display:flex; gap:6px; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:4px; margin-bottom:18px}
+.seg button{flex:1; border:0; background:none; border-radius:9px; padding:10px 4px; font-weight:700; font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--leaf); color:#fff}
+.stage{display:grid; place-items:center; height:300px}
+.orb{width:120px; height:120px; border-radius:50%; background:radial-gradient(circle at 35% 30%, var(--shea), var(--leaf) 70%); display:grid; place-items:center; color:#fff; text-align:center; transition-property:transform; transition-timing-function:ease-in-out}
+.orb b{font-family:"Bricolage Grotesque",sans-serif; font-size:2.4rem; line-height:1}
+.orb span{font-size:.95rem}
+.phase{text-align:center; font-family:"Bricolage Grotesque",sans-serif; font-size:1.4rem; font-weight:800; min-height:1.5em}
+
+/* Hold test */
+.hold{position:relative; width:220px; height:220px; margin:10px auto}
+.hold svg{width:100%; height:100%; transform:rotate(-90deg)}
+.hold .num{position:absolute; inset:0; display:grid; place-items:center; font-family:"Bricolage Grotesque",sans-serif; font-size:3rem; font-weight:800}
+.bands{display:flex; gap:6px; font-size:.82rem; margin:8px 0 14px}
+.bands div{flex:1; padding:8px; border-radius:10px; background:var(--card); border:1px solid var(--line); text-align:center}
+
+/* forms */
+.field{margin-bottom:12px}
+.field label{display:block; font-weight:700; margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%; border:1px solid var(--line); background:var(--card); border-radius:12px; padding:12px}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+
+/* shop */
+.product{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; margin-bottom:12px}
+.price{font-family:"Bricolage Grotesque",sans-serif; font-size:1.7rem; font-weight:800; color:var(--leaf)}
+.jar{width:62px; height:62px; border-radius:14px 14px 20px 20px; background:linear-gradient(var(--shea) 0 28%, var(--deep) 28%); float:right; margin-left:10px}
+.jar.sm{width:44px; height:48px}
+
+/* community */
+.post{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:12px 14px; margin-bottom:8px}
+.post .where{font-size:.82rem; color:var(--muted)}
+
+nav.bar{position:fixed; left:0; right:0; bottom:0; background:var(--card); border-top:1px solid var(--line); display:flex; justify-content:space-around; padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px)); z-index:20}
+nav.bar button{background:none; border:0; display:flex; flex-direction:column; align-items:center; font-size:.72rem; font-weight:700; color:var(--muted); padding:4px 6px; min-width:58px}
+nav.bar button .ic{font-size:1.35rem}
+nav.bar button[aria-current="page"]{color:var(--leaf)}
+.note{font-size:.82rem; color:var(--muted); border-top:1px dashed var(--line); padding-top:10px; margin-top:16px}
+@media (prefers-reduced-motion: reduce){ .word span{animation:none} .orb{transition:none!important} }
+</style>
+</head>
+<body>
+
+<div id="splash" role="dialog" aria-label="Welcome">
+  <div class="word" aria-label="Kakàraka"><span>Ka</span><span>kà</span><span>ra</span><span>ka</span></div>
+  <p>Welcome to Kakàraka. Strength, power and energy for your body.</p>
+  <button id="enter">Enter</button>
+</div>
+
+<header class="top">
+  <div class="in">
+    <div class="brand">Kakàraka</div>
+    <div class="loc">Kakàraka Wellness Inc. · Lekki, Lagos</div>
+    <div class="motd" id="motd"></div>
+  </div>
+</header>
+
+<main>
+<!-- HOME -->
+<div class="view on" id="v-home">
+  <div class="ask">
+    <label for="askIn">Where does it hurt? Tell us.</label>
+    <div class="row">
+      <input id="askIn" placeholder="e.g. my waist is paining me at work">
+      <button class="btn" id="askBtn">Help me</button>
+    </div>
+    <p class="small muted" id="askOut" style="margin:8px 0 0"></p>
+  </div>
+
+  <section>
+    <h2>Quick relief</h2>
+    <p class="muted">Tap what you feel. Get steps you can do right now.</p>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <section>
+    <h2>Move your body</h2>
+    <button class="btn gold full" data-go="steps">👣 Count my steps today</button>
+  </section>
+
+  <section>
+    <h2>Calm your body</h2>
+    <div class="two">
+      <button class="btn full" data-go="breathe">🌬️ Breathe with me</button>
+      <button class="btn ghost full" data-go="hold">⏱️ Breath-hold check</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Our services</h2>
+    <div class="services" id="services"></div>
+    <button class="btn gold full" style="margin-top:12px" data-go="book">Book a session</button>
+  </section>
+
+  <section>
+    <h2>Nerve &amp; Bone Balm</h2>
+    <p class="muted">For you, your family, or to resell in your area.</p>
+    <button class="btn ghost full" data-go="shop">Shop balms</button>
+  </section>
+</div>
+
+<!-- RELIEF DETAIL -->
+<div class="view" id="v-relief"></div>
+
+<!-- BREATHE -->
+<div class="view" id="v-breathe">
+  <button class="back" data-go="home">‹ Back</button>
+  <h2>Breathe with me</h2>
+  <div class="seg" role="group" aria-label="Breathing pattern">
+    <button aria-pressed="true" data-pat="box">Box 4-4-4-4</button>
+    <button aria-pressed="false" data-pat="478">Sleep 4-7-8</button>
+    <button aria-pressed="false" data-pat="calm">Calm 4-6</button>
+  </div>
+  <p class="small muted" id="patInfo"></p>
+  <div class="stage"><div class="orb" id="orb"><div><b id="count">4</b><span id="orbLbl">Ready</span></div></div></div>
+  <div class="phase" id="phase">Tap start and follow the circle</div>
+  <button class="btn full" id="breatheBtn" style="margin-top:14px">Start</button>
+  <p class="note">Breathe gently through your nose. If you feel dizzy, stop and breathe normally.</p>
+</div>
+
+<!-- HOLD -->
+<div class="view" id="v-hold">
+  <button class="back" data-go="home">‹ Back</button>
+  <h2>Breath-hold check</h2>
+  <p>Sit still. Breathe normally, then after a normal breath out, pinch your nose and press and hold the circle. Let go at the first real urge to breathe.</p>
+  <div class="hold">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="ring" cx="50" cy="50" r="44" fill="none" stroke="var(--leaf)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+    <button class="num" id="holdBtn" aria-label="Press and hold" style="background:none;border:0;border-radius:50%">❤</button>
+  </div>
+  <div class="bands"><div>Under 15s<br><b>Keep practising</b></div><div>15–30s<br><b>Fair</b></div><div>Over 30s<br><b>Strong</b></div></div>
+  <p class="phase" id="holdMsg"></p>
+  <p class="note">This measures breath control and calm, not heart health. It cannot tell you if your heart is okay. For chest pain, shortness of breath or a racing heart, see a doctor. Stop if you feel dizzy.</p>
+</div>
+
+<!-- STEPS -->
+<div class="view" id="v-steps">
+  <button class="back" data-go="home">‹ Back</button>
+  <h2>Step counter</h2>
+  <p class="muted">Tap start, keep the phone in your pocket or hand, and walk. Keep the app open while you walk.</p>
+  <div class="hold">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="stepRing" cx="50" cy="50" r="44" fill="none" stroke="var(--leaf)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+    <div class="num" style="flex-direction:column;display:flex;align-items:center;justify-content:center"><span id="stepNum">0</span><span class="small muted" style="font-family:inherit;font-weight:400" id="stepGoalLbl">of 6,000</span></div>
+  </div>
+  <p class="phase" id="stepMsg">Ready when you are</p>
+  <div class="two">
+    <button class="btn full" id="stepBtn">Start walking</button>
+    <button class="btn ghost full" id="stepReset">Reset today</button>
+  </div>
+  <div class="field" style="margin-top:14px"><label for="stepGoal">Daily goal</label>
+    <select id="stepGoal"><option>3000</option><option>5000</option><option selected>6000</option><option>8000</option><option>10000</option></select></div>
+  <p class="note">Start small and build up. If you are recovering from surgery or a stroke, follow the walking plan your therapist gave you.</p>
+</div>
+
+<!-- BOOK -->
+<div class="view" id="v-book">
+  <button class="back" data-go="home">‹ Back</button>
+  <h2>Book a session</h2>
+  <div class="field"><label for="bSvc">Session</label><select id="bSvc"></select></div>
+  <div class="field"><label for="bName">Your name</label><input id="bName" autocomplete="name"></div>
+  <div class="field"><label for="bPhone">Phone number</label><input id="bPhone" type="tel" autocomplete="tel"></div>
+  <div class="two">
+    <div class="field"><label for="bDate">Date</label><input id="bDate" type="date"></div>
+    <div class="field"><label for="bTime">Time</label><input id="bTime" type="time"></div>
+  </div>
+  <div class="field"><label for="bWhere">Where</label><select id="bWhere"><option>At the centre (Lekki)</option><option>Home visit</option></select></div>
+  <div class="field"><label for="bNote">What should we know?</label><textarea id="bNote" rows="3" placeholder="e.g. stroke 6 months ago, left side weak"></textarea></div>
+  <button class="btn gold full" id="bSend">Send booking on WhatsApp</button>
+  <p class="small muted" id="bMsg" style="margin-top:8px"></p>
+</div>
+
+<!-- SHOP -->
+<div class="view" id="v-shop">
+  <button class="back" data-go="home">‹ Back</button>
+  <h2>Nerve &amp; Bone Balm</h2>
+  <div class="product"><div class="jar"></div><h3>Big jar</h3><div class="price">₦7,000</div><p class="small muted">Per jar. Sold by the half dozen or dozen.</p></div>
+  <div class="product"><div class="jar sm"></div><h3>Small jar</h3><div class="price">₦2,000</div><p class="small muted">Per jar. Sold by the half dozen or dozen.</p></div>
+  <p class="small">Wholesale only. Discounts on bigger orders. <b>Free delivery from 5 dozen.</b> Below 5 dozen, you pay delivery.</p>
+  <div class="field"><label for="sSize">Size</label><select id="sSize"><option value="Big jar (₦7,000)">Big jar — ₦7,000</option><option value="Small jar (₦2,000)">Small jar — ₦2,000</option></select></div>
+  <div class="field"><label for="sType">How are you buying?</label><select id="sType"><option value="Dozen">By the dozen (12 jars)</option><option value="Half dozen">By the half dozen (6 jars)</option></select></div>
+  <div class="field"><label for="sQty" id="sQtyLbl">How many?</label><input id="sQty" type="number" min="1" value="1" inputmode="numeric"></div>
+  <p id="sTotal" style="font-weight:700"></p>
+  <button class="btn gold full" id="sSend">Order on WhatsApp</button>
+  <p class="small muted" id="sMsg" style="margin-top:8px"></p>
+</div>
+
+<!-- COMMUNITY -->
+<div class="view" id="v-community">
+  <h2>Kakàraka Herbal Community</h2>
+  <p class="muted">Our community lives on WhatsApp. Join to see daily updates, walks, stretches and tips from members.</p>
+  <button class="btn gold full" id="cJoin">Join the Herbal Community</button>
+  <p class="small muted" id="cMsg" style="margin-top:8px"></p>
+  <h3 style="margin-top:22px">Share your update</h3>
+  <p class="small muted">Tell members where you are so people near you can join.</p>
+  <div class="two">
+    <div class="field"><label for="cCountry">Country</label><input id="cCountry" value="Nigeria"></div>
+    <div class="field"><label for="cState">State</label><input id="cState" value="Lagos"></div>
+  </div>
+  <div class="field"><label for="cComm">Community</label><input id="cComm" value="Lekki"></div>
+  <div class="field"><label for="cText">Your update</label><textarea id="cText" rows="2" placeholder="e.g. 30 min walk at Lekki Conservation Centre, 6am. Join me!"></textarea></div>
+  <button class="btn full" id="cPost">Post update in WhatsApp</button>
+  <p class="small muted" style="margin-top:8px">WhatsApp opens with your update written. Pick the Kakàraka Herbal Community and press send.</p>
+</div>
+</main>
+
+<nav class="bar" aria-label="Main">
+  <button data-go="home" aria-current="page"><span class="ic">🏠</span>Home</button>
+  <button data-go="steps"><span class="ic">👣</span>Steps</button>
+  <button data-go="book"><span class="ic">📅</span>Book</button>
+  <button data-go="shop"><span class="ic">🫙</span>Balms</button>
+  <button data-go="community"><span class="ic">🌍</span>Community</button>
+</nav>
+
+<script>
+// ===== SETTINGS: fill these two in =====
+const WHATSAPP = "";        // Kakàraka WhatsApp number, country code, no + or spaces. e.g. "2348031234567"
+const COMMUNITY_LINK = "";  // WhatsApp community/group invite link, e.g. "https://chat.whatsapp.com/AbC123..."
+// ========================================
+const $ = s => document.querySelector(s);
+
+const MOTD = [
+  "Your body listens to you. Speak kindly to it today.",
+  "Ten minutes of stretching is ten minutes of strength.",
+  "Stand up, roll your shoulders, drink water. Small things add up.",
+  "Rest is not weakness. It is how muscles rebuild.",
+  "Walk a little further today than yesterday.",
+  "Breathe slow. A calm body heals faster.",
+  "Strength is built one steady step at a time."
+];
+$("#motd").textContent = MOTD[Math.floor(Date.now()/86400000) % MOTD.length];
+
+const SERVICES = [
+  ["Physiotherapy","Pain, stiffness and injury care"],
+  ["Rehabilitation","Stroke, paralysis, walking again after surgery"],
+  ["Medical massage","Targeted work on problem muscles"],
+  ["Relaxation massage","Full-body release of tension"],
+  ["Reflexology","Pressure on the feet and hands"],
+  ["Acupressure","Pressure points for pain and calm"],
+  ["Stretch sessions","Guided stretching for mobility"],
+  ["Meditation & relaxation","Quiet the mind, relax the body"]
+];
+$("#services").innerHTML = SERVICES.map(s=>`<div><b>${s[0]}</b><span class="muted small">${s[1]}</span></div>`).join("");
+$("#bSvc").innerHTML = SERVICES.map(s=>`<option>${s[0]}</option>`).join("");
+
+const EMERG = "Call 112 (Nigeria emergency) or go to the nearest hospital.";
+const R = {
+  headache:{ic:"🤕",t:"Headache",k:["head","headache","migraine"],
+    steps:["Sit in a quiet, dim place and drink a full glass of water.","Press the web between your thumb and index finger (hand point LI4). Firm pressure, small circles, 1 minute each hand.","Press the two hollows at the base of your skull (GB20) with your thumbs. Hold 30 seconds, breathe slowly.","Rub your temples gently in slow circles for 1 minute.","Loosen your neck: chin to chest, then slowly ear to shoulder each side, 5 times."],
+    point:"Skip the LI4 hand point if you are pregnant.",
+    red:"Sudden worst-ever headache, headache with stiff neck and fever, weakness on one side, confusion, or after a head injury."},
+  neck:{ic:"🧍",t:"Neck & shoulders",k:["neck","shoulder","stiff neck"],
+    steps:["Sit tall. Pull your chin straight back (make a double chin). Hold 5 seconds, 10 times.","Roll your shoulders backwards slowly, 10 times.","Ear to shoulder, hold 20 seconds each side. No bouncing.","Squeeze your shoulder blades together, hold 5 seconds, 10 times.","Warm compress on the neck for 10–15 minutes."],
+    point:"Press the top of the shoulder muscle, halfway between neck and shoulder tip. Hold 30 seconds.",
+    red:"Pain spreading down the arm with numbness or weakness, or neck pain after a fall or accident."},
+  waist:{ic:"🔙",t:"Waist & lower back",k:["waist","back","lower back","spine","lumbar"],
+    steps:["Don't lie in bed all day. Gentle movement helps more than rest.","Lie on your back, knees bent. Flatten your back into the floor, hold 5 seconds, 10 times.","Pull one knee to your chest, hold 20 seconds, then the other.","On hands and knees, slowly round your back up, then let it dip down (cat-cow), 10 times.","At the office: stand up every 30 minutes, hands on hips, lean back gently 5 times."],
+    point:"Warm compress on the waist for 15 minutes, then walk slowly for 5 minutes.",
+    red:"Numbness between the legs, loss of bladder or bowel control, weakness in the legs, or back pain with fever."},
+  knee:{ic:"🦵",t:"Knee",k:["knee","knees"],
+    steps:["Sit with leg straight. Tighten the thigh to press the back of the knee down. Hold 5 seconds, 10 times.","Lying down, lift the straight leg a hand's height, hold 3 seconds, 10 times.","Sitting, slide your heel back and forward slowly, 10 times.","If swollen: raise the leg, cool compress wrapped in cloth for 15 minutes."],
+    point:"Is it sharp when you move, or a dull ache at rest? Sharp pain after a twist needs to be checked.",
+    red:"Knee locked or gives way, can't put weight on it, big swelling after injury, or hot, red, painful knee with fever."},
+  ankle:{ic:"🦶",t:"Ankle & foot",k:["ankle","foot","feet","heel","sprain"],
+    steps:["Raise the foot above heart level.","Cool compress wrapped in cloth, 15 minutes, a few times a day for the first 2 days.","Draw the alphabet in the air with your big toe, slowly, to keep it moving.","Roll the sole over a bottle for 2 minutes for heel pain."],
+    point:"Walk as soon as it's comfortable. Gentle use helps healing.",
+    red:"Can't take 4 steps, bone pain when you press it, or the foot looks out of shape."},
+  hand:{ic:"✋",t:"Wrist & hand (office)",k:["wrist","hand","finger","typing","phone"],
+    steps:["Shake out your hands for 10 seconds.","Arm straight, palm up, gently pull fingers back with the other hand. Hold 20 seconds. Then palm down.","Make a tight fist, then spread your fingers wide, 10 times.","Keep wrists straight when typing, not bent up."],
+    point:"Massage the soft muscle at the base of the thumb in small circles for 1 minute.",
+    red:"Numbness that doesn't go away, weakness when gripping, or a sudden swelling after a fall."},
+  eyes:{ic:"👁️",t:"Tired eyes",k:["eye","eyes","vision","screen"],
+    steps:["20-20-20: every 20 minutes, look at something 20 feet away for 20 seconds.","Rub palms warm, cup them over closed eyes for 30 seconds (palming).","Blink fully 10 times.","Look up, down, left, right, slowly, 5 times each. Then slow circles.","Gently press the inner corners of your eyebrows for 30 seconds."],
+    point:"Keep your screen an arm's length away and slightly below eye level.",
+    red:"Sudden loss of vision, eye pain with redness, flashes of light or a curtain over your sight."},
+  stress:{ic:"😮‍💨",t:"Stress & anxiety",k:["stress","anxiety","anxious","panic","worried","tense"],
+    steps:["Open Breathe with me and do box breathing for 2 minutes.","Press the point 3 finger-widths below the wrist crease, between the two tendons (PC6). Hold 1 minute each arm.","Name 5 things you can see, 4 you can hear, 3 you can touch.","Drop your shoulders. Unclench your jaw."],
+    point:"Gently press between your eyebrows for 1 minute with slow breathing.",
+    red:"Chest pain, fainting, or thoughts of harming yourself. Reach someone now."},
+  sleep:{ic:"😴",t:"Sleep & positions",k:["sleep","insomnia","bed","pillow","position","sitting","sit","driving","drive","walking","walk","posture"],
+    steps:["Sleeping on your side: pillow between your knees, one pillow under your head so your neck is straight.","Sleeping on your back: small pillow under your knees.","Avoid sleeping on your stomach. It twists your neck.","Sitting: feet flat, hips a little higher than knees, back against the chair, screen at eye level.","Driving: seat close enough that your wrists rest on top of the wheel, headrest level with the top of your head.","Walking: head tall, look ahead not down, let your arms swing."],
+    point:"Before bed, try 4-7-8 breathing in Breathe with me.",
+    red:"Loud snoring with choking or gasping at night. See a doctor."},
+  bp:{ic:"🩺",t:"High blood pressure moment",k:["blood pressure","bp","hypertension","pressure high"],urgent:true,
+    steps:["Sit down, back supported, feet flat. Stop what you are doing.","Do slow breathing: in for 4, out for 6, for 5 minutes.","Loosen tight clothes. Stay somewhere cool.","Take your prescribed medicine as your doctor told you. Don't double it.","Check again after 15 minutes if you have a machine, and contact your doctor."],
+    point:"These steps help you stay calm. They don't replace medicine.",
+    red:"Severe headache, chest pain, trouble breathing, blurred vision, weakness or numbness on one side, confusion or trouble speaking. " },
+  sugar:{ic:"🩸",t:"Blood sugar: soleus push-up",k:["sugar","diabetes","glucose","soleus","calf"],
+    steps:["Sit with feet flat, knees at a right angle.","Keep the front of your foot on the floor and lift your heel up as high as it goes.","Let the heel come down. Repeat smoothly, like a slow rhythm.","Do it while working or watching TV. Aim for several minutes, especially after meals."],
+    point:"This works your calf's soleus muscle, which helps your body use sugar. Keep taking your medicine.",
+    red:"Shaking, sweating and confusion (low sugar), or very thirsty, weak and drowsy (high sugar)."},
+  face:{ic:"🙂",t:"Face & jaw",k:["face","jaw","chin","teeth","tmj"],
+    steps:["Let your teeth part slightly and your tongue rest on the roof of your mouth.","Massage the jaw muscle in front of your ear in small circles for 1 minute.","Open your mouth slowly and close, 10 times, without clicking.","Gently stroke from chin up to the ears with your fingertips, 10 times."],
+    point:"If you grind your teeth at night, tell your dentist.",
+    red:"Jaw pain with chest pain or left-arm pain can be a heart problem."}
+};
+$("#tiles").innerHTML = Object.entries(R).map(([k,v])=>`<button class="tile${v.urgent?' urgent':''}" data-r="${k}"><span class="ic">${v.ic}</span>${v.t}</button>`).join("");
+
+function showRelief(k){
+  const v = R[k];
+  $("#v-relief").innerHTML = `<button class="back" data-go="home">‹ Back</button>
+  <h2>${v.ic} ${v.t}</h2><p class="muted">Do these now, slowly. Stop if pain gets worse.</p>
+  <ol class="steps">${v.steps.map(s=>`<li>${s}</li>`).join("")}</ol>
+  <div class="point">${v.point}</div>
+  <div class="red"><b>Get help now if:</b>${v.red} ${EMERG}</div>
+  <button class="btn gold full" data-go="book">Book a session with us</button>`;
+  go("relief");
+}
+
+function go(v){
+  document.querySelectorAll(".view").forEach(x=>x.classList.toggle("on", x.id==="v-"+v));
+  document.querySelectorAll("nav.bar button").forEach(b=>{ if(b.dataset.go===v) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  window.scrollTo(0,0);
+  if(v!=="breathe") stopBreath();
+}
+document.addEventListener("click", e=>{
+  const g = e.target.closest("[data-go]"); if(g){ go(g.dataset.go); return; }
+  const r = e.target.closest("[data-r]"); if(r) showRelief(r.dataset.r);
+});
+
+$("#enter").onclick = ()=> $("#splash").classList.add("gone");
+setTimeout(()=> $("#splash").classList.add("gone"), 4000);
+
+// Ask
+function ask(){
+  const q = $("#askIn").value.toLowerCase().trim(); if(!q) return;
+  if(/chest pain|can't breathe|cannot breathe|faint|stroke|numb.*face|slurred/.test(q)){
+    $("#askOut").innerHTML = `<b style="color:var(--alert)">This could be an emergency. ${EMERG}</b>`; return;
+  }
+  let best=null, score=0;
+  for(const [k,v] of Object.entries(R)){ const s=v.k.filter(w=>q.includes(w)).length; if(s>score){score=s;best=k;} }
+  if(best) showRelief(best);
+  else $("#askOut").textContent = "We couldn't match that yet. Tap the closest picture below, or book a session so we can check you.";
+}
+$("#askBtn").onclick = ask;
+$("#askIn").addEventListener("keydown", e=>{ if(e.key==="Enter") ask(); });
+
+// Breathing
+const PATS = {
+  box:{info:"Box breathing: in 4, hold 4, out 4, hold 4. Good for stress and focus.", seq:[["Breathe in",4,1.9],["Hold",4,1.9],["Breathe out",4,1],["Hold",4,1]]},
+  "478":{info:"4-7-8: in 4, hold 7, out slowly for 8. Good before sleep. Start with 4 rounds.", seq:[["Breathe in",4,1.9],["Hold",7,1.9],["Breathe out",8,1]]},
+  calm:{info:"Calm breathing: in 4, out 6. The long breath out slows your heart rate. Good for pain and pressure moments.", seq:[["Breathe in",4,1.9],["Breathe out",6,1]]}
+};
+let pat="box", bTimer=null, running=false;
+const orb=$("#orb");
+function setPat(p){ pat=p; document.querySelectorAll("[data-pat]").forEach(b=>b.setAttribute("aria-pressed", b.dataset.pat===p)); $("#patInfo").textContent=PATS[p].info; stopBreath(); }
+document.querySelectorAll("[data-pat]").forEach(b=>b.onclick=()=>setPat(b.dataset.pat));
+setPat("box");
+function stopBreath(){ clearTimeout(bTimer); running=false; $("#breatheBtn").textContent="Start"; orb.style.transitionDuration="0.6s"; orb.style.transform="scale(1)"; $("#orbLbl").textContent="Ready"; $("#count").textContent=PATS[pat].seq[0][1]; $("#phase").textContent="Tap start and follow the circle"; }
+function runPhase(i){
+  if(!running) return;
+  const [lbl,sec,scale] = PATS[pat].seq[i % PATS[pat].seq.length];
+  $("#phase").textContent=lbl; $("#orbLbl").textContent=lbl;
+  orb.style.transitionDuration = sec+"s"; orb.style.transform=`scale(${scale})`;
+  let n=sec; $("#count").textContent=n;
+  const tick=()=>{ if(!running) return; n--; if(n>0){ $("#count").textContent=n; bTimer=setTimeout(tick,1000);} else runPhase(i+1); };
+  bTimer=setTimeout(tick,1000);
+}
+$("#breatheBtn").onclick=()=>{ if(running){stopBreath();return;} running=true; $("#breatheBtn").textContent="Stop"; runPhase(0); };
+
+// Breath hold
+let hStart=0, hRaf=null; const ring=$("#ring"), C=276.5;
+function hDown(e){ e.preventDefault(); hStart=performance.now(); $("#holdMsg").textContent="Holding… let go when you need to breathe"; const loop=()=>{ const s=(performance.now()-hStart)/1000; $("#holdBtn").textContent=Math.floor(s); ring.style.strokeDashoffset = C - C*Math.min(s/40,1); ring.style.stroke = s<15?"var(--shea)":"var(--leaf)"; hRaf=requestAnimationFrame(loop); }; loop(); }
+function hUp(){ if(!hStart) return; cancelAnimationFrame(hRaf); const s=Math.round((performance.now()-hStart)/1000); hStart=0;
+  $("#holdMsg").textContent = s<15 ? `${s}s — keep practising calm breathing daily` : s<=30 ? `${s}s — fair. Daily breathing practice will build it` : `${s}s — strong breath control`; }
+const hb=$("#holdBtn");
+hb.addEventListener("pointerdown",hDown); hb.addEventListener("pointerup",hUp); hb.addEventListener("pointerleave",hUp); hb.addEventListener("pointercancel",hUp);
+hb.addEventListener("contextmenu",e=>e.preventDefault());
+
+// Booking
+function openLink(url){
+  const a=document.createElement("a"); a.href=url; a.target="_blank"; a.rel="noopener noreferrer";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function wa(text, msgEl){
+  if(!/^\d{10,15}$/.test(WHATSAPP)){ if(msgEl) msgEl.textContent="WhatsApp number is not set up yet. Please call us to order."; return false; }
+  openLink(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`); return true;
+}
+$("#bSend").onclick=()=>{
+  const name=$("#bName").value.trim(), phone=$("#bPhone").value.trim();
+  if(!name||!phone){ $("#bMsg").textContent="Add your name and phone number so we can confirm."; return; }
+  if(!wa(`Hello Kakàraka, I want to book a session.\nSession: ${$("#bSvc").value}\nName: ${name}\nPhone: ${phone}\nDate: ${$("#bDate").value||"flexible"}\nTime: ${$("#bTime").value||"flexible"}\nWhere: ${$("#bWhere").value}\nNotes: ${$("#bNote").value||"-"}`, $("#bMsg"))) return;
+  $("#bMsg").textContent="WhatsApp is opening with your booking. Press send there.";
+};
+
+// Shop
+function total(){
+  const big=$("#sSize").value.startsWith("Big"), price=big?7000:2000, per=$("#sType").value==="Dozen"?12:6, q=Math.max(1,parseInt($("#sQty").value)||1);
+  $("#sQtyLbl").textContent = per===12 ? "How many dozens?" : "How many half dozens?";
+  const jars=q*per, dozens=jars/12, free=dozens>=5;
+  $("#sTotal").textContent = `${jars} jars · ₦${(jars*price).toLocaleString()} before discount · ` + (free? "free delivery" : "you pay delivery");
+  return {jars,q,per};
+}
+["#sSize","#sType","#sQty"].forEach(s=>$(s).addEventListener("input",total)); total();
+$("#sSend").onclick=()=>{ const t=total(); if(wa(`Hello Kakàraka, I want to order Nerve & Bone Balm.\nSize: ${$("#sSize").value}\nQuantity: ${t.q} ${t.per===12?"dozen":"half dozen"} (${t.jars} jars)\n${$("#sTotal").textContent}\nPlease confirm my discount and delivery.`, $("#sMsg"))) $("#sMsg").textContent="WhatsApp is opening with your order. Press send there."; };
+
+// Community
+$("#cJoin").onclick=()=>{ if(/^https:\/\/(chat\.whatsapp\.com|whatsapp\.com\/channel)\//.test(COMMUNITY_LINK)) openLink(COMMUNITY_LINK); else $("#cMsg").textContent="Community link is not set up yet."; };
+$("#cPost").onclick=()=>{ const t=$("#cText").value.trim(); if(!t){ $("#cText").focus(); return; }
+  openLink("https://wa.me/?text="+encodeURIComponent(`📍 ${$("#cComm").value}, ${$("#cState").value}, ${$("#cCountry").value}\n${t}\n\n#Kakaraka`)); };
+
+// Steps (phone motion sensor)
+const SC=276.5; let steps=0, stepOn=false, lastStep=0, avg=9.8, above=false;
+const todayKey="kk-steps-"+new Date().toISOString().slice(0,10);
+function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v);}catch(e){ return null; } }
+steps=parseInt(ls(todayKey))||0;
+const goalSel=$("#stepGoal"); if(ls("kk-goal")) goalSel.value=ls("kk-goal");
+function drawSteps(){
+  const g=+goalSel.value; $("#stepNum").textContent=steps.toLocaleString(); $("#stepGoalLbl").textContent="of "+g.toLocaleString();
+  $("#stepRing").style.strokeDashoffset = SC - SC*Math.min(steps/g,1);
+  if(steps>=g) $("#stepMsg").textContent="Goal reached. Well done!";
+}
+goalSel.onchange=()=>{ ls("kk-goal",goalSel.value); drawSteps(); };
+function onMotion(e){
+  const a=e.accelerationIncludingGravity; if(!a||a.x==null) return;
+  const m=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z); avg=avg*0.9+m*0.1;
+  const now=performance.now();
+  if(!above && m>avg+1.6 && now-lastStep>300){ above=true; lastStep=now; steps++; ls(todayKey,steps); drawSteps(); }
+  else if(above && m<avg) above=false;
+}
+let gotMotion=false;
+async function startSteps(){
+  try{ if(typeof DeviceMotionEvent!=="undefined" && DeviceMotionEvent.requestPermission){ const r=await DeviceMotionEvent.requestPermission(); if(r!=="granted"){ $("#stepMsg").textContent="Allow motion access so we can count your steps."; return; } } }catch(e){}
+  gotMotion=false; window.addEventListener("devicemotion",m0=>gotMotion=true,{once:true});
+  window.addEventListener("devicemotion",onMotion); stepOn=true; $("#stepBtn").textContent="Stop"; $("#stepMsg").textContent="Counting… keep walking";
+  setTimeout(()=>{ if(stepOn && !gotMotion) $("#stepMsg").textContent="This phone isn't sharing motion here. Open the app in your phone's browser (Chrome or Safari) to count steps."; },2500);
+}
+function stopSteps(){ window.removeEventListener("devicemotion",onMotion); stepOn=false; $("#stepBtn").textContent="Start walking"; if(steps<+goalSel.value) $("#stepMsg").textContent=`${steps.toLocaleString()} steps so far today`; }
+$("#stepBtn").onclick=()=> stepOn? stopSteps() : startSteps();
+$("#stepReset").onclick=()=>{ steps=0; ls(todayKey,0); drawSteps(); $("#stepMsg").textContent="Reset. Ready when you are"; };
+drawSteps();
+</script>
+</body>
+</html>
